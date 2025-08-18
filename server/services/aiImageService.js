@@ -1,22 +1,52 @@
 import { SogniClient } from '@sogni-ai/sogni-client';
 import { buildVariationPrompts } from './promptService.js';
 import { processSquareImage } from './imageProcessor.js';
+import 'dotenv/config';
 import { v4 as uuidv4 } from 'uuid';
 
 // Initialize Sogni client only if API key is provided
 let sogni = null;
-if (process.env.SOGNI_API_KEY && process.env.SOGNI_API_KEY !== 'your_sogni_api_key_here') {
+
+async function initializeSogniClient() {
   try {
-    sogni = new SogniClient({
-      apiKey: process.env.SOGNI_API_KEY
+    console.log('Attempting to create SogniClient instance...');
+
+    const sogni = await SogniClient.createInstance({
+      appId: process.env.APP_ID,
+      network: 'relaxed',
+      restEndpoint: process.env.REST_ENDPOINT,
+      socketEndpoint: process.env.SOCKET_ENDPOINT,
     });
-    console.log('✅ Sogni AI client initialized');
+
+    console.log('Sogni API client initialized successfully.');
+
+    // Attach event listeners
+    sogni.apiClient.on('connected', () => {
+      console.log('Connected to Sogni API');
+    });
+
+    sogni.apiClient.on('disconnected', ({ code, reason }) => {
+      console.error('Disconnected from Sogni API', code, reason);
+      console.log('Restarting process in 5 seconds...');
+      setTimeout(() => process.exit(1), 5000);
+    });
+
+    // Attempt to login
+    console.log(process.env.APP_ID, process.env.SOGNI_USERNAME, process.env.SOGNI_PASSWORD);
+    await sogni.account.login(process.env.SOGNI_USERNAME, process.env.SOGNI_PASSWORD);
+
+    return sogni;
   } catch (error) {
-    console.warn('⚠️  Sogni AI client initialization failed:', error.message);
+    console.error('Error initializing Sogni API client:', error);
+    console.error('Exiting in 5 seconds...');
+    setTimeout(() => process.exit(1), 5000);
+    throw error;
   }
-} else {
-  console.warn('⚠️  Sogni API key not provided. Using demo/mock generation.');
 }
+
+(async () => {
+  sogni = await initializeSogniClient();
+})();
 
 export async function generateSleepOptions(roomType, roomFeatures = null, customPrompts = null, progressCallback) {
   try {
