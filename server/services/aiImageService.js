@@ -57,9 +57,10 @@ export async function generateSleepOptions(roomType, roomFeatures = null, custom
     console.log(`📝 Built ${prompts.length} prompts`);
 
     const results = [];
-    const batchSize = 3; // Generate 3 images at a time to manage API limits
+    const batchSize = 1; // Generate 3 images at a time to manage API limits
 
-    for (let i = 0; i < prompts.length; i += batchSize) {
+    for (let i = 0; i < 1; i += batchSize) {
+    // for (let i = 0; i < prompts.length; i += batchSize) {
       const batch = prompts.slice(i, i + batchSize);
       
       // Generate batch concurrently
@@ -147,33 +148,44 @@ export async function generateSleepOptions(roomType, roomFeatures = null, custom
 }
 
 async function generateWithSogni(prompt, imageNumber, progressCallback) {
+  const model_name = 'coreml-architecturerealmix_v11_6bit'; // Use your preferred model name here
   try {
     // Check if Sogni client is available
     if (!sogni) {
       console.log(`🎭 Mock generating image ${imageNumber} (no API key)`);
-      // Return a demo/placeholder image for development
       return await generateMockImage(prompt, imageNumber, progressCallback);
     }
 
-    // Create generation request
-    const response = await sogni.generateImage({
+    // Create a new project
+    const project = await sogni.projects.create({
+      tokenType: "spark",
+      modelId: model_name,
       prompt: prompt,
       width: 1080,
       height: 1080,
       steps: 30,
       guidance: 7.5,
       seed: Math.floor(Math.random() * 1000000),
-      model: 'sdxl' // or your preferred model
     });
 
-    // Poll for completion (Sogni-specific implementation)
-    const imageUrl = await pollForCompletion(response.id, imageNumber, progressCallback);
-    
-    return imageUrl;
-    
+    console.log(`Project created with ID: ${project.id}`);
+
+    // Subscribe to progress updates
+    project.on('updated', (keys) => {
+      if (keys.includes('progress')) {
+        console.log('Progress updated:', project.progress);
+      }
+    });
+
+    // Wait for the project to complete
+    const resultUrls = await project.waitForCompletion();
+    console.log(`Project completed. Result URLs: ${resultUrls}`);
+
+
+    // Return the first result URL
+    return resultUrls[0];
   } catch (error) {
     console.error(`Sogni generation error for image ${imageNumber}:`, error);
-    // Fallback to mock generation if Sogni fails
     return await generateMockImage(prompt, imageNumber, progressCallback);
   }
 }
