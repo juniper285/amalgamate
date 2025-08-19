@@ -13,7 +13,7 @@ async function initializeSogniClient() {
 
     const sogni = await SogniClient.createInstance({
       appId: process.env.APP_ID,
-      network: 'relaxed',
+      network: 'fast', // relaxed or fast
       restEndpoint: process.env.REST_ENDPOINT,
       socketEndpoint: process.env.SOCKET_ENDPOINT,
     });
@@ -57,9 +57,11 @@ export async function generateSleepOptions(roomType, roomFeatures = null, custom
     console.log(`📝 Built ${prompts.length} prompts`);
 
     const results = [];
+
+    // Batch sizes and loops reduced for testing
     const batchSize = 1; // Generate 3 images at a time to manage API limits
 
-    for (let i = 0; i < 1; i += batchSize) {
+    for (let i = 0; i < 2; i += batchSize) {
     // for (let i = 0; i < prompts.length; i += batchSize) {
       const batch = prompts.slice(i, i + batchSize);
       
@@ -148,7 +150,10 @@ export async function generateSleepOptions(roomType, roomFeatures = null, custom
 }
 
 async function generateWithSogni(prompt, imageNumber, progressCallback) {
-  const model_name = 'coreml-architecturerealmix_v11_6bit'; // Use your preferred model name here
+  // const model_name = 'coreml-architecturerealmix_v11_6bit'; // relaxed network
+  const model_name = 'coreml-architecturerealmix_v11_768'; // fast network
+  const negativePrompt = "cropped, low quality, bad quality, jpeg artifacts, watermark, added windows, missing windows, missing walls,"
+  const batchSize = 1
   try {
     // Check if Sogni client is available
     if (!sogni) {
@@ -157,36 +162,32 @@ async function generateWithSogni(prompt, imageNumber, progressCallback) {
     }
 
     // Create a new project
-    const project = await sogni.projects.create({
+    let project = await sogni.projects.create({
       tokenType: "spark",
       modelId: model_name,
-      prompt: prompt,
-      width: 1080,
-      height: 1080,
-      steps: 30,
-      guidance: 7.5,
-      seed: Math.floor(Math.random() * 1000000),
+      positivePrompt: prompt,
+      negativePrompt: negativePrompt,
+      steps: 20,
+      guidance: 1,
+      numberOfImages: batchSize,
+      scheduler: 'Euler',
+      timeStepSpacing: 'Linear',
+      sizePreset: 'custom',
+      width: 512,
+      height: 512,
     });
 
     console.log(`Project created with ID: ${project.id}`);
 
-    // Subscribe to progress updates
-    project.on('updated', (keys) => {
-      if (keys.includes('progress')) {
-        console.log('Progress updated:', project.progress);
-      }
-    });
-
-    // Wait for the project to complete
-    const resultUrls = await project.waitForCompletion();
+    console.log("awaiting project completion...");
+    const resultUrls = await waitProjectCompletion(project);
     console.log(`Project completed. Result URLs: ${resultUrls}`);
-
 
     // Return the first result URL
     return resultUrls[0];
   } catch (error) {
     console.error(`Sogni generation error for image ${imageNumber}:`, error);
-    return await generateMockImage(prompt, imageNumber, progressCallback);
+    // return await generateMockImage(prompt, imageNumber, progressCallback);
   }
 }
 
@@ -251,6 +252,17 @@ async function pollForCompletion(jobId, imageNumber, progressCallback, maxAttemp
   }
   
   throw new Error('Generation timeout - image took too long to complete');
+}
+
+function waitProjectCompletion(project){
+  return new Promise((resolve, reject)=>{
+    project.on('completed', (data)=>{
+      resolve(data);
+    });
+    project.on('failed', (data)=>{
+      reject(data);
+    });
+  });
 }
 
 // Alternative implementation using Replicate (uncomment if you prefer)
