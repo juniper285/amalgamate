@@ -102,7 +102,7 @@ const TypeSelector = ({ onTypeSelect, onBack }) => {
                 className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
               />
               <div 
-                className="absolute top-0 left-0 h-2 bg-gradient-to-r from-blue-400 to-purple-500 rounded-lg pointer-events-none"
+                className="absolute top-1/2 left-0 h-2 bg-gradient-to-r from-blue-400 to-purple-500 rounded-lg pointer-events-none transform -translate-y-1/2"
                 style={{ width: `${generationStrength * 100}%` }}
               />
             </div>
