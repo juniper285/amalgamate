@@ -14,7 +14,7 @@ const OptionsGrid = ({ images, isGenerating }) => {
   };
 
   // Create array with placeholders for loading states
-  const displayImages = Array.from({ length: 9 }, (_, index) => {
+  const displayImages = Array.from({ length: 3 }, (_, index) => {
     const imageData = images.find(img => img.number === index + 1);
     return imageData || { number: index + 1, loading: true };
   });
@@ -53,7 +53,7 @@ const OptionsGrid = ({ images, isGenerating }) => {
             <button
               onClick={() => {
                 // Share collection to Instagram
-                const text = `Where would you sleep best? 🛏️✨\n\nPick your favorite from these 9 dreamy bedroom options!\n\n#WhereWouldYouSleepBest #BedroomGoals #DreamBedroom`;
+                const text = `Where would you sleep best? 🛏️✨\n\nPick your favorite from these 3 dreamy bedroom options!\n\n#WhereWouldYouSleepBest #BedroomGoals #DreamBedroom`;
                 if (navigator.share) {
                   navigator.share({
                     title: 'Where Would You Sleep Best?',

@@ -6,7 +6,7 @@ const roomTypes = [
     name: 'Cozy Cabin',
     emoji: '🏕️',
     description: 'Rustic woodland retreat vibes',
-    color: 'from-amber-400 to-orange-500',
+    gradient: 'linear-gradient(135deg, #fbbf24, #f97316)',
     examples: ['🌲 Forest treehouse', '🔥 Mountain lodge', '🏔️ Lakeside cabin']
   },
   {
@@ -14,7 +14,7 @@ const roomTypes = [
     name: 'Modern Luxury',
     emoji: '✨',
     description: 'Sleek contemporary elegance',
-    color: 'from-gray-400 to-gray-600',
+    gradient: 'linear-gradient(135deg, #9ca3af, #4b5563)',
     examples: ['🏙️ Penthouse views', '🏠 Glass house', '🌅 Rooftop terrace']
   },
   {
@@ -22,7 +22,7 @@ const roomTypes = [
     name: 'Fantasy Magical',
     emoji: '🔮',
     description: 'Enchanted dreamlike spaces',
-    color: 'from-purple-400 to-pink-500',
+    gradient: 'linear-gradient(135deg, #c084fc, #ec4899)',
     examples: ['🧚‍♀️ Fairy garden', '🏰 Castle tower', '🌙 Moonlit sanctuary']
   },
   {
@@ -30,7 +30,7 @@ const roomTypes = [
     name: 'Tropical Paradise',
     emoji: '🌴',
     description: 'Beach and island-inspired',
-    color: 'from-teal-400 to-blue-500',
+    gradient: 'linear-gradient(135deg, #2dd4bf, #3b82f6)',
     examples: ['🏖️ Beach villa', '🌺 Jungle retreat', '🏝️ Overwater bungalow']
   },
   {
@@ -38,7 +38,7 @@ const roomTypes = [
     name: 'Vintage Romantic',
     emoji: '🌹',
     description: 'Classic timeless charm',
-    color: 'from-rose-400 to-pink-500',
+    gradient: 'linear-gradient(135deg, #fb7185, #ec4899)',
     examples: ['🏛️ Victorian manor', '🌸 Garden cottage', '📚 Library nook']
   },
   {
@@ -46,7 +46,7 @@ const roomTypes = [
     name: 'Minimalist Zen',
     emoji: '🧘‍♀️',
     description: 'Clean peaceful simplicity',
-    color: 'from-green-400 to-teal-500',
+    gradient: 'linear-gradient(135deg, #4ade80, #14b8a6)',
     examples: ['🎋 Japanese room', '🪨 Meditation space', '💧 Water feature']
   }
 ];
@@ -69,7 +69,7 @@ const TypeSelector = ({ onTypeSelect, onBack }) => {
           Choose Your Dream Bedroom Style
         </h2>
         <p className="text-gray-600">
-          We'll generate 9 unique variations in your selected style
+          We'll generate 3 unique variations in your selected style
         </p>
       </div>
 
@@ -86,7 +86,7 @@ const TypeSelector = ({ onTypeSelect, onBack }) => {
             }`}
             style={{
               background: selectedType === type.id || hoveredType === type.id
-                ? `linear-gradient(135deg, ${type.color.split(' ').join(', ')})`
+                ? type.gradient
                 : 'rgba(255, 255, 255, 0.9)'
             }}
             onClick={() => handleTypeClick(type.id)}
@@ -157,7 +157,7 @@ const TypeSelector = ({ onTypeSelect, onBack }) => {
         </button>
         
         <div className="text-sm text-gray-500">
-          Next: Generate 9 unique bedrooms ✨
+          Next: Generate 3 unique bedrooms ✨
         </div>
       </div>
     </div>

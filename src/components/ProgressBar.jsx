@@ -22,7 +22,7 @@ const ProgressBar = ({ progress }) => {
   return (
     <div className="w-full max-w-2xl mx-auto">
       <div className="grid grid-cols-3 gap-4 mb-6">
-        {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(num => {
+        {[1, 2, 3].map(num => {
           const item = progress[num] || { status: 'pending', progress: 0 };
           
           return (
@@ -76,14 +76,14 @@ const ProgressBar = ({ progress }) => {
         <div className="flex justify-between text-sm text-gray-600 mb-2">
           <span>Overall Progress</span>
           <span>
-            {Object.values(progress).filter(p => p.status === 'complete').length} / 9 Complete
+            {Object.values(progress).filter(p => p.status === 'complete').length} / 3 Complete
           </span>
         </div>
         <div className="w-full bg-gray-200 rounded-full h-3">
           <div 
             className="bg-gradient-to-r from-purple-500 to-pink-500 h-3 rounded-full transition-all duration-500"
             style={{ 
-              width: `${(Object.values(progress).filter(p => p.status === 'complete').length / 9) * 100}%` 
+              width: `${(Object.values(progress).filter(p => p.status === 'complete').length / 3) * 100}%` 
             }}
           />
         </div>

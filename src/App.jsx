@@ -25,7 +25,7 @@ function App() {
     try {
       // Initialize progress tracking
       const initialProgress = {};
-      for (let i = 1; i <= 9; i++) {
+      for (let i = 1; i <= 3; i++) {
         initialProgress[i] = { status: 'pending', progress: 0 };
       }
       setGenerationProgress(initialProgress);
@@ -114,7 +114,7 @@ function App() {
             Where Would You Sleep Best? 💭
           </h1>
           <p className="text-gray-600 text-lg">
-            Transform your room into 9 dreamy bedroom variations for Instagram
+            Transform your room into 3 dreamy bedroom variations for Instagram
           </p>
         </div>
 
@@ -128,7 +128,7 @@ function App() {
                   Create Your Dream Bedroom Collection
                 </h2>
                 <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
-                  Upload a room photo (optional) and we'll generate 9 stunning bedroom variations 
+                  Upload a room photo (optional) and we'll generate 3 stunning bedroom variations 
                   perfect for your "Where would you sleep best?" Instagram post.
                 </p>
               </div>
@@ -152,7 +152,7 @@ function App() {
               <div className="mt-12">
                 <h3 className="text-lg font-semibold mb-4 text-gray-700">Example Results:</h3>
                 <div className="grid grid-cols-3 gap-2 max-w-xs mx-auto opacity-60">
-                  {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(num => (
+                  {[1, 2, 3].map(num => (
                     <div key={num} className="aspect-square bg-gray-200 rounded-lg flex items-center justify-center text-gray-500">
                       {num}
                     </div>
@@ -183,7 +183,7 @@ function App() {
                   Creating Your Dream Bedrooms ✨
                 </h2>
                 <p className="text-gray-600 mb-6">
-                  Generating 9 unique {selectedType.replace('-', ' ')} bedroom variations...
+                  Generating 3 unique {selectedType.replace('-', ' ')} bedroom variations...
                 </p>
               </div>
               
