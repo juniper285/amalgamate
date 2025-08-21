@@ -63,7 +63,7 @@ router.post('/', upload.single('userImage'), async (req, res) => {
     }
 
     // Generate images with progress updates
-    await generateSleepOptions(roomType, roomFeatures, customPrompts, (update) => {
+    await generateSleepOptions(roomType, roomFeatures, customPrompts, userImage?.buffer, (update) => {
       res.write(`data: ${JSON.stringify(update)}\n\n`);
     });
 
