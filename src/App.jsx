@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import ImageUpload from './components/ImageUpload';
 import TypeSelector from './components/TypeSelector';
 import OptionsGrid from './components/OptionsGrid';
@@ -8,6 +8,7 @@ function App() {
   const [currentStep, setCurrentStep] = useState('welcome');
   const [userImage, setUserImage] = useState(null);
   const [selectedType, setSelectedType] = useState('');
+  const [generationStrength, setGenerationStrength] = useState(0.6);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImages, setGeneratedImages] = useState([]);
   const [generationProgress, setGenerationProgress] = useState({});
@@ -17,8 +18,9 @@ function App() {
     setCurrentStep('typeSelection');
   };
 
-  const handleTypeSelect = async (type) => {
+  const handleTypeSelect = async (type, strength = 0.6) => {
     setSelectedType(type);
+    setGenerationStrength(strength);
     setCurrentStep('generating');
     setIsGenerating(true);
     
@@ -31,17 +33,18 @@ function App() {
       setGenerationProgress(initialProgress);
       
       // Start generation
-      await generateImages(type, userImage);
+      await generateImages(type, userImage, strength);
     } catch (error) {
       console.error('Generation failed:', error);
       setIsGenerating(false);
     }
   };
 
-  const generateImages = async (roomType, uploadedImage) => {
+  const generateImages = async (roomType, uploadedImage, strength) => {
     try {
       const formData = new FormData();
       formData.append('roomType', roomType);
+      formData.append('generationStrength', strength);
       if (uploadedImage) {
         formData.append('userImage', uploadedImage);
       }
@@ -100,6 +103,7 @@ function App() {
     setCurrentStep('welcome');
     setUserImage(null);
     setSelectedType('');
+    setGenerationStrength(0.6);
     setGeneratedImages([]);
     setGenerationProgress({});
     setIsGenerating(false);

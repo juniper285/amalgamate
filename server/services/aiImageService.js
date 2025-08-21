@@ -48,10 +48,10 @@ async function initializeSogniClient() {
   sogni = await initializeSogniClient();
 })();
 
-export async function generateSleepOptions(roomType, roomFeatures = null, customPrompts = null, userImageBuffer = null, progressCallback) {
+export async function generateSleepOptions(roomType, roomFeatures = null, customPrompts = null, userImageBuffer = null, generationStrength = 0.6, progressCallback) {
   try {
     const generationType = userImageBuffer ? 'image-to-image' : 'text-to-image';
-    console.log(`🎨 Generating 3 images for room type: ${roomType} using ${generationType} generation`);
+    console.log(`🎨 Generating 3 images for room type: ${roomType} using ${generationType} generation (strength: ${generationStrength})`);
     
     // Build all 3 prompts
     const prompts = buildVariationPrompts(roomType, roomFeatures, customPrompts);
@@ -81,7 +81,7 @@ export async function generateSleepOptions(roomType, roomFeatures = null, custom
           console.log(`🖼️  Generating image ${imageNumber}: ${promptData.style}`);
 
           // Generate image using Sogni
-          const imageUrl = await generateWithSogni(promptData.prompt, imageNumber, progressCallback, userImageBuffer);
+          const imageUrl = await generateWithSogni(promptData.prompt, imageNumber, progressCallback, userImageBuffer, generationStrength);
           
           // Process to square format with number overlay
           const processedImage = await processSquareImage(imageUrl, imageNumber, promptData.style);
@@ -149,7 +149,7 @@ export async function generateSleepOptions(roomType, roomFeatures = null, custom
   }
 }
 
-async function generateWithSogni(prompt, imageNumber, progressCallback, userImageBuffer = null) {
+async function generateWithSogni(prompt, imageNumber, progressCallback, userImageBuffer = null, generationStrength = 0.6) {
   // const model_name = 'coreml-architecturerealmix_v11_6bit'; // relaxed network
   const model_name = 'coreml-architecturerealmix_v11_768'; // fast network
   const negativePrompt = "cropped, low quality, bad quality, jpeg artifacts, watermark, added windows, missing windows, missing walls,"
@@ -179,9 +179,9 @@ async function generateWithSogni(prompt, imageNumber, progressCallback, userImag
 
     // Add starting image if user provided one
     if (userImageBuffer) {
-      console.log('🖼️  Using uploaded image as starting image for image-to-image generation');
+      console.log(`🖼️  Using uploaded image as starting image for image-to-image generation (strength: ${generationStrength})`);
       projectOptions.startingImage = userImageBuffer;
-      projectOptions.startingImageStrength = 0.6; // Controls how much the original image influences the result (0-1)
+      projectOptions.startingImageStrength = generationStrength; // Controls how much the original image influences the result (0-1)
     }
 
     let project = await sogni.projects.create(projectOptions);

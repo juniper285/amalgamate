@@ -30,8 +30,11 @@ const upload = multer({
 // Main generation endpoint
 router.post('/', upload.single('userImage'), async (req, res) => {
   try {
-    const { roomType, customPrompts } = req.body;
+    const { roomType, customPrompts, generationStrength } = req.body;
     const userImage = req.file;
+    
+    // Parse generation strength with default fallback
+    const strength = generationStrength ? parseFloat(generationStrength) : 0.6;
 
     // Validate required fields
     if (!roomType) {
@@ -63,7 +66,7 @@ router.post('/', upload.single('userImage'), async (req, res) => {
     }
 
     // Generate images with progress updates
-    await generateSleepOptions(roomType, roomFeatures, customPrompts, userImage?.buffer, (update) => {
+    await generateSleepOptions(roomType, roomFeatures, customPrompts, userImage?.buffer, strength, (update) => {
       res.write(`data: ${JSON.stringify(update)}\n\n`);
     });
 
