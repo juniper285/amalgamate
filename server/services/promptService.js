@@ -7,11 +7,11 @@ export function buildVariationPrompts(roomType, roomFeatures = null, customPromp
   }
 
   const variations = styleVariations[roomType];
-  if (!variations || variations.length < 9) {
+  if (!variations || variations.length < 3) {
     throw new Error(`Insufficient variations for room type: ${roomType}`);
   }
 
-  return variations.map((variation, index) => {
+  return variations.slice(0, 3).map((variation, index) => {
     let prompt = `${variation}, ${roomTypeData.basePrompt}`;
     
     // Incorporate user room features if available
@@ -107,11 +107,11 @@ export function optimizePromptForModel(prompt, modelType = 'sdxl') {
   }
 }
 
-// Helper function to ensure variety across all 9 images
+// Helper function to ensure variety across all 3 images
 export function ensureVariety(prompts) {
-  const lightingTypes = ['golden hour', 'blue hour', 'candlelight', 'natural daylight', 'ambient', 'warm', 'soft', 'dramatic', 'ethereal'];
-  const viewTypes = ['interior view', 'window view', 'panoramic view', 'close-up view', 'wide angle view'];
-  const moodTypes = ['cozy', 'serene', 'luxurious', 'peaceful', 'romantic', 'mystical', 'tranquil', 'elegant', 'dreamy'];
+  const lightingTypes = ['golden hour', 'natural daylight', 'warm'];
+  const viewTypes = ['interior view', 'panoramic view', 'wide angle view'];
+  const moodTypes = ['cozy', 'serene', 'luxurious'];
   
   return prompts.map((promptData, index) => {
     // Rotate through different lighting types

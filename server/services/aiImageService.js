@@ -48,21 +48,21 @@ async function initializeSogniClient() {
   sogni = await initializeSogniClient();
 })();
 
-export async function generateSleepOptions(roomType, roomFeatures = null, customPrompts = null, progressCallback) {
+export async function generateSleepOptions(roomType, roomFeatures = null, customPrompts = null, userImageBuffer = null, generationStrength = 0.6, progressCallback) {
   try {
-    console.log(`🎨 Generating 9 images for room type: ${roomType}`);
+    const generationType = userImageBuffer ? 'image-to-image' : 'text-to-image';
+    console.log(`🎨 Generating 3 images for room type: ${roomType} using ${generationType} generation (strength: ${generationStrength})`);
     
-    // Build all 9 prompts
+    // Build all 3 prompts
     const prompts = buildVariationPrompts(roomType, roomFeatures, customPrompts);
     console.log(`📝 Built ${prompts.length} prompts`);
 
     const results = [];
 
-    // Batch sizes and loops reduced for testing
-    const batchSize = 1; // Generate 3 images at a time to manage API limits
+    // Generate 3 images in batches
+    const batchSize = 1; // Generate 1 image at a time to manage API limits
 
-    for (let i = 0; i < 2; i += batchSize) {
-    // for (let i = 0; i < prompts.length; i += batchSize) {
+    for (let i = 0; i < prompts.length; i += batchSize) {
       const batch = prompts.slice(i, i + batchSize);
       
       // Generate batch concurrently
@@ -81,7 +81,7 @@ export async function generateSleepOptions(roomType, roomFeatures = null, custom
           console.log(`🖼️  Generating image ${imageNumber}: ${promptData.style}`);
 
           // Generate image using Sogni
-          const imageUrl = await generateWithSogni(promptData.prompt, imageNumber, progressCallback);
+          const imageUrl = await generateWithSogni(promptData.prompt, imageNumber, progressCallback, userImageBuffer, generationStrength);
           
           // Process to square format with number overlay
           const processedImage = await processSquareImage(imageUrl, imageNumber, promptData.style);
@@ -140,7 +140,7 @@ export async function generateSleepOptions(roomType, roomFeatures = null, custom
       }
     }
 
-    console.log(`✅ Generation complete: ${results.length}/9 images successful`);
+    console.log(`✅ Generation complete: ${results.length}/3 images successful`);
     return results;
 
   } catch (error) {
@@ -149,7 +149,7 @@ export async function generateSleepOptions(roomType, roomFeatures = null, custom
   }
 }
 
-async function generateWithSogni(prompt, imageNumber, progressCallback) {
+async function generateWithSogni(prompt, imageNumber, progressCallback, userImageBuffer = null, generationStrength = 0.6) {
   // const model_name = 'coreml-architecturerealmix_v11_6bit'; // relaxed network
   const model_name = 'coreml-architecturerealmix_v11_768'; // fast network
   const negativePrompt = "cropped, low quality, bad quality, jpeg artifacts, watermark, added windows, missing windows, missing walls,"
@@ -162,7 +162,7 @@ async function generateWithSogni(prompt, imageNumber, progressCallback) {
     }
 
     // Create a new project
-    let project = await sogni.projects.create({
+    const projectOptions = {
       tokenType: "spark",
       modelId: model_name,
       positivePrompt: prompt,
@@ -175,7 +175,16 @@ async function generateWithSogni(prompt, imageNumber, progressCallback) {
       sizePreset: 'custom',
       width: 512,
       height: 512,
-    });
+    };
+
+    // Add starting image if user provided one
+    if (userImageBuffer) {
+      console.log(`🖼️  Using uploaded image as starting image for image-to-image generation (strength: ${generationStrength})`);
+      projectOptions.startingImage = userImageBuffer;
+      projectOptions.startingImageStrength = generationStrength; // Controls how much the original image influences the result (0-1)
+    }
+
+    let project = await sogni.projects.create(projectOptions);
 
     console.log(`Project created with ID: ${project.id}`);
 
@@ -214,45 +223,7 @@ async function generateMockImage(prompt, imageNumber, progressCallback) {
   return placeholderUrl;
 }
 
-async function pollForCompletion(jobId, imageNumber, progressCallback, maxAttempts = 60) {
-  // Only run polling if sogni client is available
-  if (!sogni) {
-    throw new Error('Sogni client not available');
-  }
-
-  for (let attempt = 0; attempt < maxAttempts; attempt++) {
-    try {
-      const status = await sogni.getGenerationStatus(jobId);
-      
-      if (status.status === 'completed' && status.imageUrl) {
-        return status.imageUrl;
-      } else if (status.status === 'failed') {
-        throw new Error(status.error || 'Generation failed');
-      } else if (status.status === 'processing') {
-        // Update progress based on estimated completion
-        const estimatedProgress = Math.min(90, (attempt / maxAttempts) * 100);
-        progressCallback({
-          type: 'progress',
-          imageNumber,
-          status: 'generating',
-          progress: Math.floor(estimatedProgress)
-        });
-      }
-      
-      // Wait before next poll
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-    } catch (error) {
-      if (attempt === maxAttempts - 1) {
-        throw error;
-      }
-      // Continue polling on temporary errors
-      await new Promise(resolve => setTimeout(resolve, 3000));
-    }
-  }
-  
-  throw new Error('Generation timeout - image took too long to complete');
-}
+// Removed pollForCompletion function - using waitProjectCompletion event-based approach instead
 
 function waitProjectCompletion(project){
   return new Promise((resolve, reject)=>{
