@@ -77,6 +77,62 @@ const TypeSelector = ({ onTypeSelect, onBack }) => {
         </p>
       </div>
 
+            {/* Generation Strength Settings */}
+      <div className="glass-card rounded-xl p-6 mb-8 border-2 border-purple-200">
+        <div className="mb-4">
+          <h3 className="font-bold text-lg text-gray-800 mb-2 flex items-center">
+            ⚡ Generation Strength
+          </h3>
+          <p className="text-sm text-gray-600 mb-4">
+            Control how creative or similar to your original image the results will be
+          </p>
+        </div>
+        
+        <div className="space-y-4">
+          <div className="flex items-center space-x-4">
+            <span className="text-sm text-gray-500 w-20">Similar</span>
+            <div className="flex-1 relative">
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.1"
+                value={generationStrength}
+                onChange={(e) => setGenerationStrength(parseFloat(e.target.value))}
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+              />
+              <div 
+                className="absolute top-0 left-0 h-2 bg-gradient-to-r from-blue-400 to-purple-500 rounded-lg pointer-events-none"
+                style={{ width: `${generationStrength * 100}%` }}
+              />
+            </div>
+            <span className="text-sm text-gray-500 w-20">Creative</span>
+          </div>
+          
+          <div className="flex justify-between text-xs text-gray-500 px-2">
+            <span>Stays close to original</span>
+            <span>More imaginative</span>
+          </div>
+          
+          {/* Strength description */}
+          <div className="bg-blue-50 rounded-lg p-3 text-sm">
+            {generationStrength < 0.3 ? (
+              <span className="text-blue-700">
+                🎯 <strong>Conservative:</strong> Results will closely match your original image's style and layout
+              </span>
+            ) : generationStrength < 0.7 ? (
+              <span className="text-purple-700">
+                🎨 <strong>Balanced:</strong> Good mix of creativity while keeping some original elements
+              </span>
+            ) : (
+              <span className="text-pink-700">
+                ✨ <strong>Creative:</strong> Highly imaginative results that may differ significantly from the original
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         {roomTypes.map((type) => (
           <div
@@ -143,61 +199,7 @@ const TypeSelector = ({ onTypeSelect, onBack }) => {
         ))}
       </div>
 
-      {/* Generation Strength Settings */}
-      <div className="glass-card rounded-xl p-6 mb-8 border-2 border-purple-200">
-        <div className="mb-4">
-          <h3 className="font-bold text-lg text-gray-800 mb-2 flex items-center">
-            ⚡ Generation Strength
-          </h3>
-          <p className="text-sm text-gray-600 mb-4">
-            Control how creative or similar to your original image the results will be
-          </p>
-        </div>
-        
-        <div className="space-y-4">
-          <div className="flex items-center space-x-4">
-            <span className="text-sm text-gray-500 w-20">Similar</span>
-            <div className="flex-1 relative">
-              <input
-                type="range"
-                min="0"
-                max="1"
-                step="0.1"
-                value={generationStrength}
-                onChange={(e) => setGenerationStrength(parseFloat(e.target.value))}
-                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
-              />
-              <div 
-                className="absolute top-0 left-0 h-2 bg-gradient-to-r from-blue-400 to-purple-500 rounded-lg pointer-events-none"
-                style={{ width: `${generationStrength * 100}%` }}
-              />
-            </div>
-            <span className="text-sm text-gray-500 w-20">Creative</span>
-          </div>
-          
-          <div className="flex justify-between text-xs text-gray-500 px-2">
-            <span>Stays close to original</span>
-            <span>More imaginative</span>
-          </div>
-          
-          {/* Strength description */}
-          <div className="bg-blue-50 rounded-lg p-3 text-sm">
-            {generationStrength < 0.3 ? (
-              <span className="text-blue-700">
-                🎯 <strong>Conservative:</strong> Results will closely match your original image's style and layout
-              </span>
-            ) : generationStrength < 0.7 ? (
-              <span className="text-purple-700">
-                🎨 <strong>Balanced:</strong> Good mix of creativity while keeping some original elements
-              </span>
-            ) : (
-              <span className="text-pink-700">
-                ✨ <strong>Creative:</strong> Highly imaginative results that may differ significantly from the original
-              </span>
-            )}
-          </div>
-        </div>
-      </div>
+
 
       {/* Custom Option */}
       <div className="glass-card rounded-xl p-4 mb-8 opacity-50">
