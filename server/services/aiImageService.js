@@ -81,7 +81,7 @@ export async function generateSleepOptions(roomType, roomFeatures = null, custom
           console.log(`🖼️  Generating image ${imageNumber}: ${promptData.style}`);
 
           // Generate image using Sogni
-          const imageUrl = await generateWithSogni(promptData.prompt, imageNumber, progressCallback, userImageBuffer, generationStrength);
+          const imageUrl = await generateWithSogni(promptData.prompt + `(${promptData.style})`, imageNumber, progressCallback, userImageBuffer, generationStrength);
           
           // Process to square format with number overlay
           const processedImage = await processSquareImage(imageUrl, imageNumber, promptData.style);
@@ -152,7 +152,8 @@ export async function generateSleepOptions(roomType, roomFeatures = null, custom
 async function generateWithSogni(prompt, imageNumber, progressCallback, userImageBuffer = null, generationStrength = 0.6) {
   // const model_name = 'coreml-architecturerealmix_v11_6bit'; // relaxed network
   const model_name = 'coreml-architecturerealmix_v11_768'; // fast network
-  const negativePrompt = "cropped, low quality, bad quality, jpeg artifacts, watermark, added windows, missing windows, missing walls,"
+  // const negativePrompt = "cropped, low quality, bad quality, jpeg artifacts, watermark, added windows, missing windows, missing walls,"
+  const negativePrompt = "different layout, different room, watermark, low quality, extra walls, missing walls, (plain walls), extra windows, missing windows, same wallpaper, same walls design, same lights, (missing lights)"
   const batchSize = 1
   try {
     // Check if Sogni client is available
@@ -167,8 +168,8 @@ async function generateWithSogni(prompt, imageNumber, progressCallback, userImag
       modelId: model_name,
       positivePrompt: prompt,
       negativePrompt: negativePrompt,
-      steps: 20,
-      guidance: 1,
+      steps: 28,
+      guidance: 8.8,
       numberOfImages: batchSize,
       scheduler: 'Euler',
       timeStepSpacing: 'Linear',

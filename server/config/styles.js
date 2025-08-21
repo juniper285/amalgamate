@@ -3,37 +3,37 @@ export const roomTypes = [
     id: 'cozy-cabin',
     name: 'Cozy Cabin',
     description: 'Rustic woodland retreat vibes',
-    basePrompt: 'cozy cabin bedroom with wooden beams and warm lighting, rustic interior design'
+    basePrompt: '(cosy), (cabin room), ((cosy views)), ((cabin materials)), ((cozy style)), ((cabin furniture)), ((cosy design)), ((cabin wallpaper)), (((cabin wooden walls))), ((cosy lighting))'
   },
   {
     id: 'modern-luxury',
     name: 'Modern Luxury',
     description: 'Sleek contemporary elegance',
-    basePrompt: 'modern luxury bedroom with clean lines and premium finishes, contemporary interior design'
+    basePrompt: '(modern room), ((modern views)), ((modern materials)), ((sleek modern style)), ((modern furniture)), ((modern design)), ((modern wallpaper)), (((modern walls))), ((modern lighting))'
   },
   {
     id: 'fantasy-magical',
     name: 'Fantasy Magical',
     description: 'Enchanted dreamlike spaces',
-    basePrompt: 'magical fantasy bedroom with ethereal lighting and mystical elements, enchanted interior'
+    basePrompt: '(fantasy room), ((fantasy materials)), ((fantasy style)), ((magical furniture)), ((fantasy design)), ((fantasy wallpaper)), (((fantasy walls))), ((fantasy lighting))'
   },
   {
     id: 'tropical-paradise',
     name: 'Tropical Paradise',
     description: 'Beach and island-inspired',
-    basePrompt: 'tropical paradise bedroom with ocean views and natural materials, beach resort style'
+    basePrompt: '(tropical paradise room), ((ocean views)), ((natural materials)), ((beach resort style)), ((bamboo furniture)), ((tropical design)), ((tropical wallpaper)), (((tropical wooden walls)))'
   },
   {
     id: 'vintage-romantic',
     name: 'Vintage Romantic',
     description: 'Classic timeless charm',
-    basePrompt: 'vintage romantic bedroom with antique furniture and soft fabrics, classical interior design'
+    basePrompt: '(romantic), (vintage paradise room), ((vintage materials)), ((vintage style)), ((vintage furniture)), ((vintage design)), ((vintage wallpaper)), (((vintage wooden walls))), ((vintage lighting))'
   },
   {
     id: 'minimalist-zen',
     name: 'Minimalist Zen',
     description: 'Clean peaceful simplicity',
-    basePrompt: 'minimalist zen bedroom with simple lines and calming atmosphere, japanese-inspired design'
+    basePrompt: '(minimalist), ((calming)), (Japanese room), ((japan views)), ((natural materials)), ((japan style)), ((japan furniture)), ((japan design)), ((japan wallpaper)), (((japan wooden walls))), ((japan lighting))'
   }
 ];
 
