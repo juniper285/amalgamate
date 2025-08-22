@@ -4,6 +4,7 @@ import ShareModal from './ShareModal';
 
 const OptionsGrid = ({ images, isGenerating }) => {
   const [selectedImage, setSelectedImage] = useState(null);
+  const [downloadingAll, setDownloadingAll] = useState(false);
 
   const handleImageClick = (image) => {
     setSelectedImage(image);
@@ -11,6 +12,45 @@ const OptionsGrid = ({ images, isGenerating }) => {
 
   const handleCloseModal = () => {
     setSelectedImage(null);
+  };
+
+  const handleDownloadAll = async () => {
+    if (images.length === 0) return;
+    
+    try {
+      setDownloadingAll(true);
+      
+      for (const image of images) {
+        // Fetch the image from the provided URL
+        const response = await fetch(image.downloadUrl || image.url);
+        if (!response.ok) {
+          console.error(`Failed to fetch image ${image.number}:`, response.statusText);
+          continue;
+        }
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+
+        // Create a temporary anchor element to trigger the download
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `bedroom-option-${image.number}.jpg`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        // Revoke the object URL to free memory
+        window.URL.revokeObjectURL(url);
+        
+        // Small delay between downloads to avoid overwhelming the browser
+        await new Promise(resolve => setTimeout(resolve, 200));
+      }
+    } catch (error) {
+      console.error('Download all failed:', error);
+      alert('Download failed for some images. Please try again.');
+    } finally {
+      setDownloadingAll(false);
+    }
   };
 
   // Create array with placeholders for loading states
@@ -40,14 +80,11 @@ const OptionsGrid = ({ images, isGenerating }) => {
           
           <div className="flex flex-wrap justify-center gap-3">
             <button
-              onClick={() => {
-                // Download all images as a zip
-                // Implementation would depend on backend support
-                console.log('Download all clicked');
-              }}
+              onClick={handleDownloadAll}
               className="btn-secondary text-sm"
+              disabled={downloadingAll}
             >
-              📦 Download All Images
+              {downloadingAll ? '⏳ Downloading...' : '📦 Download All Images'}
             </button>
             
             <button

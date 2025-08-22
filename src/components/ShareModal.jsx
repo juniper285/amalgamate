@@ -87,79 +87,93 @@ const ShareModal = ({ image, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50" onClick={onClose}>
-      <div className="glass-card rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+    <div 
+      className="fixed inset-0 flex items-center justify-center p-4 z-50 animate-in fade-in duration-300" 
+      onClick={onClose}
+    >
+      <div 
+        className="bg-white rounded-3xl max-w-2xl w-full shadow-2xl transform animate-in slide-in-from-bottom-8 duration-300 border border-white/20" 
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header with close button */}
         <div className="relative">
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 z-10 bg-black/50 text-white rounded-full w-10 h-10 flex items-center justify-center hover:bg-black/70 transition-colors"
+            className="absolute top-4 right-4 z-10 bg-black/10 hover:bg-black/20 text-gray-700 rounded-full w-8 h-8 flex items-center justify-center transition-all duration-200 hover:scale-110"
           >
             ×
           </button>
-          
-          <div className="p-6">
-            <div className="relative mb-6">
+        </div>
+
+        {/* Main content - horizontal layout */}
+        <div className="flex flex-col md:flex-row p-6 gap-6">
+          {/* Image section */}
+          <div className="flex-shrink-0">
+            <div className="relative">
               <img
                 src={image.url}
                 alt={`Bedroom option ${image.number}`}
-                className="w-full rounded-xl"
+                className="w-72 h-72 object-cover rounded-2xl shadow-lg"
               />
-              <div className="absolute top-4 left-4 option-number text-lg">
+              <div className="absolute top-3 left-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold shadow-lg">
                 {image.number}
               </div>
             </div>
-            
-            <div className="mb-6">
-              <h3 className="text-xl font-bold mb-2 text-gray-800">
+          </div>
+          
+          {/* Content and actions section */}
+          <div className="flex-1 flex flex-col justify-between min-h-72">
+            <div>
+              {/* Title */}
+              <h3 className="text-2xl font-bold mb-3 text-gray-900">
                 Bedroom Option {image.number}
               </h3>
-              <p className="text-gray-600 text-sm mb-4">
-                {image.style}
-              </p>
               
-              <div className="bg-gray-50 rounded-lg p-3 text-sm">
-                <p className="font-medium text-gray-700 mb-1">Suggested Caption:</p>
-                <p className="text-gray-600 italic">
-                  "Option {image.number}: Where would you sleep best? 🛏️✨"
+              {/* Style description */}
+              {image.style && (
+                <p className="text-gray-600 mb-6">
+                  {image.style}
                 </p>
+              )}
+              
+              {/* Info box */}
+              <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-4 mb-6">
+                <p className="font-medium text-gray-700 mb-2">Perfect for Instagram</p>
+                <p className="text-sm text-gray-600">1080x1080px • Add polling stickers for maximum engagement</p>
               </div>
             </div>
-            
+
+            {/* Action buttons */}
             <div className="space-y-3">
               <div className="grid grid-cols-2 gap-3">
                 <button
                   onClick={() => handleDownload('standard')}
-                  className="btn-secondary text-sm"
+                  className="bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 px-4 py-2.5 rounded-xl font-medium hover:from-gray-200 hover:to-gray-300 transition-all duration-200 text-sm flex items-center justify-center gap-1"
                 >
-                  📥 Download Standard
+                  📥 Standard
                 </button>
                 <button
                   onClick={() => handleDownload('hd')}
-                  className="btn-secondary text-sm"
+                  className="bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 px-4 py-2.5 rounded-xl font-medium hover:from-gray-200 hover:to-gray-300 transition-all duration-200 text-sm flex items-center justify-center gap-1"
                   disabled={downloadingHD}
                 >
-                  {downloadingHD ? '⏳ Downloading...' : '📥 Download HD'}
+                  {downloadingHD ? '⏳ Downloading...' : '📥 HD'}
                 </button>
               </div>
               
               <button
                 onClick={handleShare}
-                className="btn-primary w-full"
+                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-xl font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200 transform hover:scale-[1.02] shadow-lg"
               >
                 📱 Share to Social Media
               </button>
               
               <button
                 onClick={handleCopyCaption}
-                className="w-full text-gray-600 hover:text-gray-800 underline text-sm"
+                className="w-full text-gray-500 hover:text-gray-700 text-sm py-2 transition-colors duration-200"
               >
                 📝 Copy Caption Only
               </button>
-            </div>
-            
-            <div className="mt-6 text-xs text-gray-400 text-center space-y-1">
-              <p>Image: 1080x1080px • Perfect for Instagram</p>
-              <p>💡 Post this image with polling stickers for engagement</p>
             </div>
           </div>
         </div>
