@@ -9,16 +9,24 @@ const ShareModal = ({ image, onClose }) => {
         setDownloadingHD(true);
       }
 
+      // Fetch the image from the provided URL
       const response = await fetch(image.downloadUrl || image.url);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch image: ${response.statusText}`);
+      }
+
       const blob = await response.blob();
-      
       const url = window.URL.createObjectURL(blob);
+
+      // Create a temporary anchor element to trigger the download
       const a = document.createElement('a');
       a.href = url;
       a.download = `bedroom-option-${image.number}${quality === 'hd' ? '-hd' : ''}.jpg`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
+
+      // Revoke the object URL to free memory
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Download failed:', error);
