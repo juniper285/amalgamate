@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 
-const ImageUpload = ({ onImageUpload, onSkip }) => {
+const ImageUpload = ({ onImageUpload, onSkip, onBack }) => {
   const [dragActive, setDragActive] = useState(false);
   const [preview, setPreview] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -69,6 +69,18 @@ const ImageUpload = ({ onImageUpload, onSkip }) => {
 
   return (
     <div className="glass-card rounded-2xl p-8">
+      {/* Back button */}
+      {onBack && (
+        <div className="mb-6">
+          <button
+            onClick={onBack}
+            className="flex items-center gap-2 text-gray-500 hover:text-gray-700 transition-colors duration-200"
+          >
+            ← Back to Home
+          </button>
+        </div>
+      )}
+      
       <div className="text-center mb-6">
         <h2 className="text-2xl font-bold mb-2 text-gray-800">
           Upload Your Room Photo (Optional)

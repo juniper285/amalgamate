@@ -92,7 +92,7 @@ const ShareModal = ({ image, onClose }) => {
       onClick={onClose}
     >
       <div 
-        className="bg-white rounded-3xl max-w-2xl w-full shadow-2xl transform animate-in slide-in-from-bottom-8 duration-300 border border-white/20" 
+        className="bg-white rounded-3xl max-w-4xl w-full shadow-2xl transform animate-in slide-in-from-bottom-8 duration-300 border border-white/20" 
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header with close button */}
@@ -113,7 +113,7 @@ const ShareModal = ({ image, onClose }) => {
               <img
                 src={image.url}
                 alt={`Bedroom option ${image.number}`}
-                className="w-72 h-72 object-cover rounded-2xl shadow-lg"
+                className="w-96 h-96 object-cover rounded-2xl shadow-lg"
               />
               <div className="absolute top-3 left-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold shadow-lg">
                 {image.number}
@@ -122,7 +122,7 @@ const ShareModal = ({ image, onClose }) => {
           </div>
           
           {/* Content and actions section */}
-          <div className="flex-1 flex flex-col justify-between min-h-72">
+          <div className="flex-1 flex flex-col justify-between min-h-96">
             <div>
               {/* Title */}
               <h3 className="text-2xl font-bold mb-3 text-gray-900">

@@ -39,7 +39,7 @@ const ExampleCarousel = ({ images }) => {
   return (
     <div className="relative group">
       {/* Main carousel container */}
-      <div className="relative h-64 md:h-80 overflow-hidden rounded-xl shadow-lg">
+      <div className="relative h-48 md:h-56 overflow-hidden rounded-xl shadow-lg">
         <div 
           className="flex transition-transform duration-500 ease-in-out h-full"
           style={{ transform: `translateX(-${currentIndex * 100}%)` }}
@@ -56,12 +56,6 @@ const ExampleCarousel = ({ images }) => {
               <div className="absolute top-3 left-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold shadow-lg">
                 {image.number || index + 1}
               </div>
-              {/* Optional image caption */}
-              {image.caption && (
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4 pb-12">
-                  <p className="text-white text-sm font-medium">{image.caption}</p>
-                </div>
-              )}
             </div>
           ))}
         </div>
@@ -88,7 +82,7 @@ const ExampleCarousel = ({ images }) => {
 
         {/* Progress indicators */}
         {images.length > 1 && (
-          <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex space-x-2 bg-black/30 px-3 py-1 rounded-full backdrop-blur-sm">
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 bg-black/30 px-3 py-1 rounded-full backdrop-blur-sm">
             {images.map((_, index) => (
               <button
                 key={index}

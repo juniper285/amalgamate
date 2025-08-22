@@ -305,14 +305,6 @@ const TypeSelector = ({ onTypeSelect, onBack, onCreateCustom }) => {
 
 
 
-      {/* Custom Option */}
-      <div className="glass-card rounded-xl p-4 mb-8 opacity-50">
-        <div className="text-center">
-          <div className="text-2xl mb-2">🎨</div>
-          <h3 className="font-bold text-gray-700">Custom Style</h3>
-          <p className="text-sm text-gray-500">Coming soon - describe your own style</p>
-        </div>
-      </div>
 
       <div className="flex justify-between items-center">
         <button

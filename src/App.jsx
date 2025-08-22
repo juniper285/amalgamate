@@ -101,44 +101,37 @@ function App() {
     {
       src: '/assets/bedroom-option-1-09eb45d2-756f-495f-b5b1-69d281b5e098.jpg',
       alt: 'Example bedroom design 1',
-      number: 1,
-      caption: 'Cozy bedroom with warm lighting'
+      number: 1
     },
     {
       src: '/assets/bedroom-option-2-1fea8d85-42ef-43bd-954e-61c7645280b8.jpg',
       alt: 'Example bedroom design 2', 
-      number: 2,
-      caption: 'Modern luxury bedroom'
+      number: 2
     },
     {
       src: '/assets/bedroom-option-3-4de04b0a-4bac-4c22-acfd-36621740ede0.jpg',
       alt: 'Example bedroom design 3',
-      number: 3,
-      caption: 'Minimalist zen bedroom'
+      number: 3
     },
     {
       src: '/assets/bedroom-option-1-3853a65c-146e-4661-8f92-6104ffaa4bcd.jpg',
       alt: 'Example bedroom design 4',
-      number: 1,
-      caption: 'Fantasy magical bedroom'
+      number: 1
     },
     {
       src: '/assets/bedroom-option-1-404d235a-1998-4685-be3b-870be32451bf.jpg',
       alt: 'Example bedroom design 5',
-      number: 1,
-      caption: 'Tropical paradise bedroom'
+      number: 1
     },
     {
       src: '/assets/bedroom-option-3-f1c09598-89f4-42b9-8a40-85a12a2f5fa4.jpg',
       alt: 'Example bedroom design 6',
-      number: 3,
-      caption: 'Vintage romantic bedroom'
+      number: 3
     },
     {
       src: '/assets/bedroom-option-1-ee480cd8-3868-44c1-ae25-b3e076924d62.jpg',
       alt: 'Example bedroom design 7',
-      number: 1,
-      caption: 'Dreamy bedroom sanctuary'
+      number: 1
     }
   ];
 
@@ -249,53 +242,58 @@ function App() {
         </div>
 
         {/* Main Content */}
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           {currentStep === 'welcome' && (
-            <div className="glass-card rounded-2xl p-8 text-center">
-              <div className="mb-8">
-                <div className="text-6xl mb-4">🛏️</div>
-                <h2 className="text-2xl font-bold mb-4 text-gray-800">
+            <div className="glass-card rounded-2xl p-6">
+              {/* Header Section - Compact */}
+              <div className="text-center mb-6">
+                <div className="text-5xl mb-3">🛏️</div>
+                <h2 className="text-2xl font-bold mb-3 text-gray-800">
                   Create Your Dream Bedroom Collection
                 </h2>
-                <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
+                <p className="text-gray-600 text-base max-w-3xl mx-auto">
                   Upload a room photo (optional) and we'll generate 3 stunning bedroom variations 
                   perfect for your "Where would you sleep best?" Instagram post.
                 </p>
               </div>
-              
-              {/* Example Gallery Preview - moved up and made larger */}
-              <div className="mb-8">
-                <h3 className="text-lg font-semibold mb-6 text-gray-700 text-center">See What's Possible:</h3>
-                <div className="max-w-2xl mx-auto">
+
+              {/* Main Content Area - Side by Side Layout */}
+              <div className="grid lg:grid-cols-2 gap-8 items-start">
+                {/* Left Side - Example Gallery */}
+                <div>
+                  <h3 className="text-lg font-semibold mb-4 text-gray-700 text-center">See What's Possible:</h3>
                   <ExampleCarousel images={exampleImages} />
                 </div>
-              </div>
 
-              <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg p-4 max-w-md mx-auto mb-8">
-                <p className="text-sm text-gray-600">
-                  📚 <strong>Auto-Save:</strong> Your last 3 collections are automatically saved for easy access
-                </p>
-              </div>
-              
-              <div className="space-y-4">
-                <button
-                  onClick={() => setCurrentStep('upload')}
-                  className="btn-primary block mx-auto"
-                >
-                  📸 Upload Room Photo & Start
-                </button>
-                <button
-                  onClick={() => setCurrentStep('typeSelection')}
-                  className="btn-secondary block mx-auto"
-                >
-                  🎨 Start with Blank Canvas
-                </button>
-                <button
-                  onClick={() => setCurrentStep('history')}
-                  className="btn-secondary block mx-auto"
-                >
-                  📚 View Saved Collections
-                </button>
+                {/* Right Side - Actions */}
+                <div className="space-y-4">
+                  <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg p-4">
+                    <p className="text-sm text-gray-600 text-center">
+                      📚 <strong>Auto-Save:</strong> Your last 3 collections are automatically saved for easy access
+                    </p>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <button
+                      onClick={() => setCurrentStep('upload')}
+                      className="btn-primary w-full"
+                    >
+                      📸 Upload Room Photo & Start
+                    </button>
+                    <button
+                      onClick={() => setCurrentStep('typeSelection')}
+                      className="btn-secondary w-full"
+                    >
+                      🎨 Start with Blank Canvas
+                    </button>
+                    <button
+                      onClick={() => setCurrentStep('history')}
+                      className="btn-secondary w-full"
+                    >
+                      📚 View Saved Collections
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           )}
@@ -304,6 +302,7 @@ function App() {
             <ImageUpload
               onImageUpload={handleImageUpload}
               onSkip={() => setCurrentStep('typeSelection')}
+              onBack={() => setCurrentStep('welcome')}
             />
           )}
 
