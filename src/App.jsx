@@ -1,8 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ImageUpload from './components/ImageUpload';
 import TypeSelector from './components/TypeSelector';
 import OptionsGrid from './components/OptionsGrid';
 import ProgressBar from './components/ProgressBar';
+import PhotoHistory from './components/PhotoHistory';
+import LimitWarningModal from './components/LimitWarningModal';
+import { photoHistoryService } from './services/photoHistoryService';
 
 function App() {
   const [currentStep, setCurrentStep] = useState('welcome');
@@ -12,6 +15,16 @@ function App() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImages, setGeneratedImages] = useState([]);
   const [generationProgress, setGenerationProgress] = useState({});
+  const [showLimitWarning, setShowLimitWarning] = useState(false);
+  const [pendingGeneration, setPendingGeneration] = useState(null);
+
+  // Save collection when generation is complete
+  useEffect(() => {
+    if (currentStep === 'results' && generatedImages.length > 0 && selectedType) {
+      const userImageUrl = userImage ? URL.createObjectURL(userImage) : null;
+      photoHistoryService.saveCollection(selectedType, generatedImages, userImageUrl);
+    }
+  }, [currentStep, generatedImages, selectedType, userImage]);
 
   const handleImageUpload = (image) => {
     setUserImage(image);
@@ -19,6 +32,19 @@ function App() {
   };
 
   const handleTypeSelect = async (type, strength = 0.6) => {
+    // Check if we're at the collection limit
+    if (photoHistoryService.isAtMaxLimit()) {
+      // Store the generation params and show warning
+      setPendingGeneration({ type, strength });
+      setShowLimitWarning(true);
+      return;
+    }
+    
+    // Proceed with generation directly
+    await startGeneration(type, strength);
+  };
+
+  const startGeneration = async (type, strength = 0.6) => {
     setSelectedType(type);
     setGenerationStrength(strength);
     setCurrentStep('generating');
@@ -38,6 +64,19 @@ function App() {
       console.error('Generation failed:', error);
       setIsGenerating(false);
     }
+  };
+
+  const handleProceedWithGeneration = async () => {
+    setShowLimitWarning(false);
+    if (pendingGeneration) {
+      await startGeneration(pendingGeneration.type, pendingGeneration.strength);
+      setPendingGeneration(null);
+    }
+  };
+
+  const handleCancelGeneration = () => {
+    setShowLimitWarning(false);
+    setPendingGeneration(null);
   };
 
   const generateImages = async (roomType, uploadedImage, strength) => {
@@ -86,6 +125,8 @@ function App() {
               } else if (data.type === 'finished') {
                 setIsGenerating(false);
                 setCurrentStep('results');
+                
+                // Save will be handled when generatedImages updates via useEffect
               }
             } catch (e) {
               // Skip invalid JSON
@@ -109,6 +150,11 @@ function App() {
     setIsGenerating(false);
   };
 
+  // Special case: PhotoHistory has its own full layout
+  if (currentStep === 'history') {
+    return <PhotoHistory onBack={() => setCurrentStep('welcome')} />;
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50">
       <div className="container mx-auto px-4 py-8">
@@ -131,10 +177,15 @@ function App() {
                 <h2 className="text-2xl font-bold mb-4 text-gray-800">
                   Create Your Dream Bedroom Collection
                 </h2>
-                <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
+                <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
                   Upload a room photo (optional) and we'll generate 3 stunning bedroom variations 
                   perfect for your "Where would you sleep best?" Instagram post.
                 </p>
+                <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg p-3 max-w-md mx-auto mb-8">
+                  <p className="text-sm text-gray-600">
+                    📚 <strong>Auto-Save:</strong> Your last 3 collections are automatically saved for easy access
+                  </p>
+                </div>
               </div>
               
               <div className="space-y-4">
@@ -149,6 +200,12 @@ function App() {
                   className="btn-secondary block mx-auto"
                 >
                   🎨 Start with Blank Canvas
+                </button>
+                <button
+                  onClick={() => setCurrentStep('history')}
+                  className="btn-secondary block mx-auto"
+                >
+                  📚 View Saved Collections
                 </button>
               </div>
 
@@ -232,6 +289,13 @@ function App() {
           )}
         </div>
       </div>
+      
+      {/* Limit Warning Modal */}
+      <LimitWarningModal
+        isOpen={showLimitWarning}
+        onClose={handleCancelGeneration}
+        onProceed={handleProceedWithGeneration}
+      />
     </div>
   );
 }
