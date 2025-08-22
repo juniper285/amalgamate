@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { customPromptsService } from '../services/customPromptsService';
 
 const roomTypes = [
   {
@@ -51,17 +52,36 @@ const roomTypes = [
   }
 ];
 
-const TypeSelector = ({ onTypeSelect, onBack }) => {
+const TypeSelector = ({ onTypeSelect, onBack, onCreateCustom }) => {
   const [selectedType, setSelectedType] = useState('');
   const [hoveredType, setHoveredType] = useState('');
   const [generationStrength, setGenerationStrength] = useState(0.6);
+  const [customPrompts, setCustomPrompts] = useState([]);
+
+  useEffect(() => {
+    // Load custom prompts on component mount
+    const loadCustomPrompts = () => {
+      const customs = customPromptsService.getAllCustomPrompts();
+      setCustomPrompts(customs);
+    };
+    
+    loadCustomPrompts();
+    
+    // Listen for custom prompt changes (if needed)
+    const handleStorageChange = () => {
+      loadCustomPrompts();
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
 
   const handleTypeClick = (typeId) => {
     setSelectedType(typeId);
     setTimeout(() => {
-      // Map slider value (0-1) to constrained range (0.3-0.8), inverted
+      // Map slider value (0-1) to constrained range (0.2-0.8), inverted
       // Lower slider = higher strength (more creative), Higher slider = lower strength (more similar)
-      const constrainedStrength = 0.8 - (generationStrength * 0.5);
+      const constrainedStrength = 0.8 - (generationStrength * 0.6);
       onTypeSelect(typeId, constrainedStrength);
     }, 300); // Small delay for visual feedback
   };
@@ -197,6 +217,90 @@ const TypeSelector = ({ onTypeSelect, onBack }) => {
             )}
           </div>
         ))}
+
+        {/* Custom Prompts */}
+        {customPrompts.map((customType) => (
+          <div
+            key={customType.id}
+            className={`relative p-6 rounded-xl cursor-pointer transition-all duration-300 transform hover:scale-105 border-2 border-dashed border-purple-300 ${
+              selectedType === customType.id
+                ? 'ring-4 ring-purple-400 shadow-xl bg-gradient-to-br from-purple-100 to-pink-100'
+                : hoveredType === customType.id
+                ? 'shadow-lg bg-gradient-to-br from-purple-50 to-pink-50'
+                : 'hover:shadow-md bg-white/90'
+            }`}
+            onClick={() => handleTypeClick(customType.id)}
+            onMouseEnter={() => setHoveredType(customType.id)}
+            onMouseLeave={() => setHoveredType('')}
+          >
+            <div className="text-center">
+              <div className="text-4xl mb-3">{customType.emoji}</div>
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <h3 className={`font-bold text-lg ${
+                  selectedType === customType.id || hoveredType === customType.id
+                    ? 'text-purple-800'
+                    : 'text-gray-800'
+                }`}>
+                  {customType.name}
+                </h3>
+                <span className="text-xs bg-purple-500 text-white px-2 py-1 rounded-full">
+                  Custom
+                </span>
+              </div>
+              <p className={`text-sm mb-4 ${
+                selectedType === customType.id || hoveredType === customType.id
+                  ? 'text-purple-700'
+                  : 'text-gray-600'
+              }`}>
+                {customType.description}
+              </p>
+              
+              <div className="space-y-1">
+                {customType.styleVariations.slice(0, 3).map((variation, idx) => (
+                  <div 
+                    key={idx}
+                    className={`text-xs px-2 py-1 rounded-full ${
+                      selectedType === customType.id || hoveredType === customType.id
+                        ? 'bg-purple-200 text-purple-800'
+                        : 'bg-gray-100 text-gray-600'
+                    }`}
+                  >
+                    {variation.length > 30 ? `${variation.substring(0, 30)}...` : variation}
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            {selectedType === customType.id && (
+              <div className="absolute inset-0 rounded-xl flex items-center justify-center bg-purple-500/20">
+                <div className="bg-white rounded-full p-2">
+                  <svg className="w-6 h-6 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+
+        {/* Create Custom Prompt Button */}
+        <div
+          className="relative p-6 rounded-xl cursor-pointer transition-all duration-300 transform hover:scale-105 border-2 border-dashed border-gray-300 hover:border-purple-400 bg-gradient-to-br from-gray-50 to-gray-100 hover:from-purple-50 hover:to-pink-50 flex flex-col items-center justify-center min-h-[200px]"
+          onClick={onCreateCustom}
+        >
+          <div className="text-center">
+            <div className="text-4xl mb-3">➕</div>
+            <h3 className="font-bold text-lg mb-2 text-gray-700">
+              Create Custom Type
+            </h3>
+            <p className="text-sm text-gray-600 mb-4">
+              Design your own unique bedroom style with AI assistance
+            </p>
+            <div className="text-xs px-3 py-1 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+              🤖 AI Powered
+            </div>
+          </div>
+        </div>
       </div>
 
 

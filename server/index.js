@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url';
 
 import generateRoute from './routes/generate.js';
 import stylesRoute from './routes/styles.js';
+import refinePromptRoute from './routes/refine-prompt.js';
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 // Routes
 app.use('/api/generate', generateRoute);
 app.use('/api/styles', stylesRoute);
+app.use('/api/refine-prompt', refinePromptRoute);
 
 // Health check
 app.get('/api/health', (req, res) => {

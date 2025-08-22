@@ -30,7 +30,17 @@ const upload = multer({
 // Main generation endpoint
 router.post('/', upload.single('userImage'), async (req, res) => {
   try {
-    const { roomType, customPrompts, generationStrength } = req.body;
+    const { roomType, customPrompts, generationStrength, customRoomType: customRoomTypeStr } = req.body;
+    
+    // Parse custom room type if provided
+    let customRoomType = null;
+    if (customRoomTypeStr) {
+      try {
+        customRoomType = JSON.parse(customRoomTypeStr);
+      } catch (error) {
+        console.error('Failed to parse custom room type:', error);
+      }
+    }
     const userImage = req.file;
     
     // Parse generation strength with default fallback
@@ -66,7 +76,7 @@ router.post('/', upload.single('userImage'), async (req, res) => {
     }
 
     // Generate images with progress updates
-    await generateSleepOptions(roomType, roomFeatures, customPrompts, userImage?.buffer, strength, (update) => {
+    await generateSleepOptions(roomType, roomFeatures, customPrompts, userImage?.buffer, strength, customRoomType, (update) => {
       res.write(`data: ${JSON.stringify(update)}\n\n`);
     });
 

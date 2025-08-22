@@ -1,12 +1,21 @@
 import { roomTypes, styleVariations } from '../config/styles.js';
 
-export function buildVariationPrompts(roomType, roomFeatures = null, customPrompts = null) {
-  const roomTypeData = roomTypes.find(type => type.id === roomType);
-  if (!roomTypeData) {
-    throw new Error(`Unknown room type: ${roomType}`);
+export function buildVariationPrompts(roomType, roomFeatures = null, customPrompts = null, customRoomType = null) {
+  let roomTypeData;
+  let variations;
+
+  // Check if this is a custom room type
+  if (customRoomType) {
+    roomTypeData = customRoomType;
+    variations = customRoomType.styleVariations || [];
+  } else {
+    roomTypeData = roomTypes.find(type => type.id === roomType);
+    if (!roomTypeData) {
+      throw new Error(`Unknown room type: ${roomType}`);
+    }
+    variations = styleVariations[roomType];
   }
 
-  const variations = styleVariations[roomType];
   if (!variations || variations.length < 3) {
     throw new Error(`Insufficient variations for room type: ${roomType}`);
   }

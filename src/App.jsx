@@ -5,7 +5,9 @@ import OptionsGrid from './components/OptionsGrid';
 import ProgressBar from './components/ProgressBar';
 import PhotoHistory from './components/PhotoHistory';
 import LimitWarningModal from './components/LimitWarningModal';
+import CustomPromptCreator from './components/CustomPromptCreator';
 import { photoHistoryService } from './services/photoHistoryService';
+import { customPromptsService } from './services/customPromptsService';
 
 function App() {
   const [currentStep, setCurrentStep] = useState('welcome');
@@ -79,6 +81,20 @@ function App() {
     setPendingGeneration(null);
   };
 
+  const getRoomTypeDisplayName = (roomTypeId) => {
+    // Check if it's a custom room type
+    if (roomTypeId.startsWith('custom-')) {
+      const customRoomType = customPromptsService.getCustomPrompt(roomTypeId);
+      return customRoomType ? customRoomType.name : 'custom';
+    }
+    
+    // Default room types - convert kebab-case to title case
+    return roomTypeId
+      .split('-')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+
   const generateImages = async (roomType, uploadedImage, strength) => {
     try {
       const formData = new FormData();
@@ -86,6 +102,14 @@ function App() {
       formData.append('generationStrength', strength);
       if (uploadedImage) {
         formData.append('userImage', uploadedImage);
+      }
+
+      // Check if this is a custom room type
+      if (roomType.startsWith('custom-')) {
+        const customRoomType = customPromptsService.getCustomPrompt(roomType);
+        if (customRoomType) {
+          formData.append('customRoomType', JSON.stringify(customRoomType));
+        }
       }
 
       const response = await fetch('/api/generate', {
@@ -150,9 +174,18 @@ function App() {
     setIsGenerating(false);
   };
 
-  // Special case: PhotoHistory has its own full layout
+  // Special cases: Full layout components
   if (currentStep === 'history') {
     return <PhotoHistory onBack={() => setCurrentStep('welcome')} />;
+  }
+  
+  if (currentStep === 'createCustom') {
+    return (
+      <CustomPromptCreator 
+        onBack={() => setCurrentStep('typeSelection')} 
+        onSave={() => setCurrentStep('typeSelection')}
+      />
+    );
   }
 
   return (
@@ -234,6 +267,7 @@ function App() {
             <TypeSelector
               onTypeSelect={handleTypeSelect}
               onBack={() => setCurrentStep(userImage ? 'upload' : 'welcome')}
+              onCreateCustom={() => setCurrentStep('createCustom')}
             />
           )}
 
@@ -244,7 +278,7 @@ function App() {
                   Creating Your Dream Bedrooms ✨
                 </h2>
                 <p className="text-gray-600 mb-6">
-                  Generating 3 unique {selectedType.replace('-', ' ')} bedroom variations...
+                  Generating 3 unique {getRoomTypeDisplayName(selectedType)} bedroom variations...
                 </p>
               </div>
               

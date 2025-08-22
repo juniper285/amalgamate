@@ -48,13 +48,13 @@ async function initializeSogniClient() {
   sogni = await initializeSogniClient();
 })();
 
-export async function generateSleepOptions(roomType, roomFeatures = null, customPrompts = null, userImageBuffer = null, generationStrength = 0.6, progressCallback) {
+export async function generateSleepOptions(roomType, roomFeatures = null, customPrompts = null, userImageBuffer = null, generationStrength = 0.6, customRoomType = null, progressCallback) {
   try {
     const generationType = userImageBuffer ? 'image-to-image' : 'text-to-image';
     console.log(`🎨 Generating 3 images for room type: ${roomType} using ${generationType} generation (strength: ${generationStrength})`);
     
     // Build all 3 prompts
-    const prompts = buildVariationPrompts(roomType, roomFeatures, customPrompts);
+    const prompts = buildVariationPrompts(roomType, roomFeatures, customPrompts, customRoomType);
     console.log(`📝 Built ${prompts.length} prompts`);
 
     const results = [];
