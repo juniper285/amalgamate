@@ -6,6 +6,7 @@ import ProgressBar from './components/ProgressBar';
 import PhotoHistory from './components/PhotoHistory';
 import LimitWarningModal from './components/LimitWarningModal';
 import CustomPromptCreator from './components/CustomPromptCreator';
+import ExampleCarousel from './components/ExampleCarousel';
 import { photoHistoryService } from './services/photoHistoryService';
 import { customPromptsService } from './services/customPromptsService';
 
@@ -94,6 +95,52 @@ function App() {
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
   };
+
+  // Example images from public/assets folder
+  const exampleImages = [
+    {
+      src: '/assets/bedroom-option-1-09eb45d2-756f-495f-b5b1-69d281b5e098.jpg',
+      alt: 'Example bedroom design 1',
+      number: 1,
+      caption: 'Cozy bedroom with warm lighting'
+    },
+    {
+      src: '/assets/bedroom-option-2-1fea8d85-42ef-43bd-954e-61c7645280b8.jpg',
+      alt: 'Example bedroom design 2', 
+      number: 2,
+      caption: 'Modern luxury bedroom'
+    },
+    {
+      src: '/assets/bedroom-option-3-4de04b0a-4bac-4c22-acfd-36621740ede0.jpg',
+      alt: 'Example bedroom design 3',
+      number: 3,
+      caption: 'Minimalist zen bedroom'
+    },
+    {
+      src: '/assets/bedroom-option-1-3853a65c-146e-4661-8f92-6104ffaa4bcd.jpg',
+      alt: 'Example bedroom design 4',
+      number: 1,
+      caption: 'Fantasy magical bedroom'
+    },
+    {
+      src: '/assets/bedroom-option-1-404d235a-1998-4685-be3b-870be32451bf.jpg',
+      alt: 'Example bedroom design 5',
+      number: 1,
+      caption: 'Tropical paradise bedroom'
+    },
+    {
+      src: '/assets/bedroom-option-3-f1c09598-89f4-42b9-8a40-85a12a2f5fa4.jpg',
+      alt: 'Example bedroom design 6',
+      number: 3,
+      caption: 'Vintage romantic bedroom'
+    },
+    {
+      src: '/assets/bedroom-option-1-ee480cd8-3868-44c1-ae25-b3e076924d62.jpg',
+      alt: 'Example bedroom design 7',
+      number: 1,
+      caption: 'Dreamy bedroom sanctuary'
+    }
+  ];
 
   const generateImages = async (roomType, uploadedImage, strength) => {
     try {
@@ -214,11 +261,20 @@ function App() {
                   Upload a room photo (optional) and we'll generate 3 stunning bedroom variations 
                   perfect for your "Where would you sleep best?" Instagram post.
                 </p>
-                <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg p-3 max-w-md mx-auto mb-8">
-                  <p className="text-sm text-gray-600">
-                    📚 <strong>Auto-Save:</strong> Your last 3 collections are automatically saved for easy access
-                  </p>
+              </div>
+              
+              {/* Example Gallery Preview - moved up and made larger */}
+              <div className="mb-8">
+                <h3 className="text-lg font-semibold mb-6 text-gray-700 text-center">See What's Possible:</h3>
+                <div className="max-w-2xl mx-auto">
+                  <ExampleCarousel images={exampleImages} />
                 </div>
+              </div>
+
+              <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg p-4 max-w-md mx-auto mb-8">
+                <p className="text-sm text-gray-600">
+                  📚 <strong>Auto-Save:</strong> Your last 3 collections are automatically saved for easy access
+                </p>
               </div>
               
               <div className="space-y-4">
@@ -240,18 +296,6 @@ function App() {
                 >
                   📚 View Saved Collections
                 </button>
-              </div>
-
-              {/* Example Gallery Preview */}
-              <div className="mt-12">
-                <h3 className="text-lg font-semibold mb-4 text-gray-700">Example Results:</h3>
-                <div className="grid grid-cols-3 gap-2 max-w-xs mx-auto opacity-60">
-                  {[1, 2, 3].map(num => (
-                    <div key={num} className="aspect-square bg-gray-200 rounded-lg flex items-center justify-center text-gray-500">
-                      {num}
-                    </div>
-                  ))}
-                </div>
               </div>
             </div>
           )}
